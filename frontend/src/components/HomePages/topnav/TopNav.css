@@ -1,0 +1,19 @@
+ul {
+  list-style: none;
+}
+
+#lists {
+  float: right;
+  display: flex;
+  justify-content: flex-end;
+  position: relative;
+  right: 2rem;
+}
+
+.single-list {
+  margin-right: 3.5rem;
+}
+
+.single-list:hover {
+  cursor: pointer;
+}

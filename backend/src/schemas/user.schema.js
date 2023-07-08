@@ -12,7 +12,7 @@ const authenticateSchema = joi.object({
 });
 
 const addFriendSchema = joi.object({
-  friendId: joi.string().hex().length(24).custom(createObject).required(),
+  publicAddress: joi.string().required(),
 });
 
 const acceptFriendRequestSchema = joi.object({

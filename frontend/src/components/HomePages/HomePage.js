@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import SideNav from "./SideNav";
-import MainFrame from "./MainFrame";
+import TopNav from "./topnav/TopNav";
+import SideNav from "./sidenav/SideNav";
+import MainFrame from "./mainframe/MainFrame";
 import "./homepage.css";
 
 const HomePage = () => {
@@ -13,10 +14,13 @@ const HomePage = () => {
     }
   }, []);
   return (
-    <div className="homepage">
-      <SideNav></SideNav>
-      <MainFrame></MainFrame>
-    </div>
+    <>
+      <TopNav></TopNav>
+      <div className="homepage">
+        <SideNav></SideNav>
+        <MainFrame></MainFrame>
+      </div>
+    </>
   );
 };
 

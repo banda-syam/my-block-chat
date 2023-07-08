@@ -37,16 +37,25 @@ async function authenticate(req, res, next) {
   }
 }
 
+async function getMyDetails(req, res, next) {
+  try {
+    res.status(200).send(req.user);
+  } catch (e) {
+    console.log(e);
+    next(createResponseWithError(e));
+  }
+}
+
 async function makeFriends(req, res, next) {
   try {
     const user = req.user;
-    const friendId = req.body.friendId;
-    const friend = await db.collection("users").findOne({ _id: friendId });
+    const publicAddress = req.body.publicAddress;
+    const friend = await db.collection("users").findOne({ publicAddress: publicAddress });
     if (!friend) {
-      return next(createResponse(`No user found with the given id ${friendId}`, 404));
+      return next(createResponse(`No user found with the given id ${publicAddress}`, 404));
     }
 
-    if (user._id.toString() == friendId.toString()) {
+    if (user._id.toString() == publicAddress.toString()) {
       return next(createResponse(`You cannot be friend with you`, 400));
     }
 
@@ -77,7 +86,7 @@ async function makeFriends(req, res, next) {
 
 async function getFriendRequests(req, res, next) {
   try {
-    var myFriendRequests = await db.collection("friends").find({ acceptedUser: req.user._id }).toArray();
+    var myFriendRequests = await db.collection("friends").find({ acceptedUser: req.user._id, accepted: false }).toArray();
     res.status(200).send(myFriendRequests);
   } catch (e) {
     next(createResponseWithError(e));
@@ -125,4 +134,4 @@ async function unFriend(req, res, next) {
   }
 }
 
-module.exports = { authenticate, makeFriends, getFriendRequests, acceptFriendRequest, getFriends, unFriend };
+module.exports = { authenticate, getMyDetails, makeFriends, getFriendRequests, acceptFriendRequest, getFriends, unFriend };
