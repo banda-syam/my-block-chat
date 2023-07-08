@@ -1,5 +1,8 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import SideNav from "./SideNav";
+import MainFrame from "./MainFrame";
+import "./homepage.css";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -10,9 +13,10 @@ const HomePage = () => {
     }
   }, []);
   return (
-    <>
-      <h1> success </h1>
-    </>
+    <div className="homepage">
+      <SideNav></SideNav>
+      <MainFrame></MainFrame>
+    </div>
   );
 };
 
