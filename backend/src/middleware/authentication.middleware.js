@@ -1,13 +1,12 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
+const { createResponse, createResponseWithError } = require("../utils/helpers");
 
 module.exports.createToken = (payload, expiresIn = 60 * 60 * 24 * 7) => {
   return jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn,
   });
 };
-
-console.log(this.createToken({ _id: "64a31b8d86f0cc4965094eeb" }));
 
 module.exports.decodeToken = (req, res, next) => {
   const token = req.headers.token;

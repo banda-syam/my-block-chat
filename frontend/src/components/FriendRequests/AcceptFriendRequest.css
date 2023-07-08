@@ -1,0 +1,14 @@
+.friendRequestBox {
+  margin: 3rem;
+  padding-left: 1.2rem;
+  height: 5rem;
+  border: 0.5px solid grey;
+  display: flex;
+  align-items: center;
+  width: 80%;
+}
+
+#acceptButton {
+  position: relative;
+  left: 2rem;
+}

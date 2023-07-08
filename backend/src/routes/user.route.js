@@ -9,6 +9,7 @@ const schema = require("../schemas/user.schema");
 
 router.post("/authenticate", validator(schema.authenticateSchema), controller.authenticate);
 router.get("/me", decodeToken, decodeUser, controller.getMyDetails);
+router.get("/details", decodeToken, decodeUser, validator(schema.userDetailsSchema), controller.getUserDetails);
 router.post("/friendrequest", decodeToken, decodeUser, validator(schema.addFriendSchema), controller.makeFriends);
 router.get("/friendrequest", decodeToken, decodeUser, controller.getFriendRequests);
 router.patch("/friendrequest/accept", decodeToken, decodeUser, validator(schema.acceptFriendRequestSchema), controller.acceptFriendRequest);

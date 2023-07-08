@@ -41,7 +41,35 @@ async function getMyDetails(req, res, next) {
   try {
     res.status(200).send(req.user);
   } catch (e) {
-    console.log(e);
+    next(createResponseWithError(e));
+  }
+}
+
+async function getUserDetails(req, res, next) {
+  try {
+    const publicAddress = req.body.publicAddress;
+
+    const friendUser = await db.collection("users").findOne({ publicAddress: publicAddress });
+    if (!friendUser) {
+      next(createResponse(`No user found with the given address ${publicAddress}`, 404));
+    }
+
+    const friends = await db.collection("friends").findOne({
+      $or: [
+        { requestedUser: friendUser._id, acceptedUser: req.user._id },
+        { acceptedUser: friendUser._id, requestedUser: friendUser._id },
+      ],
+    });
+
+    if (friends?.accepted) {
+      friendUser["friends"] = true;
+    } else if (friends?.accepted == false) {
+      friendUser["friends"] = false;
+      friendUser["acceptRequest"] = true;
+    }
+
+    res.status(200).send(friendUser);
+  } catch (e) {
     next(createResponseWithError(e));
   }
 }
@@ -55,7 +83,7 @@ async function makeFriends(req, res, next) {
       return next(createResponse(`No user found with the given id ${publicAddress}`, 404));
     }
 
-    if (user._id.toString() == publicAddress.toString()) {
+    if (user._id.toString() == friend._id.toString()) {
       return next(createResponse(`You cannot be friend with you`, 400));
     }
 
@@ -86,7 +114,23 @@ async function makeFriends(req, res, next) {
 
 async function getFriendRequests(req, res, next) {
   try {
-    var myFriendRequests = await db.collection("friends").find({ acceptedUser: req.user._id, accepted: false }).toArray();
+    var myFriendRequests = await db
+      .collection("friends")
+      .aggregate([
+        {
+          $match: { acceptedUser: req.user._id, accepted: false },
+        },
+        {
+          $lookup: { from: "users", localField: "acceptedUser", foreignField: "_id", as: "AcceptingUser" },
+        },
+        {
+          $unwind: "$AcceptingUser",
+        },
+        {
+          $project: { requestedUser: 0, acceptedUser: 0, "AcceptingUser.wallet": 0 },
+        },
+      ])
+      .toArray();
     res.status(200).send(myFriendRequests);
   } catch (e) {
     next(createResponseWithError(e));
@@ -111,7 +155,7 @@ async function getFriends(req, res, next) {
   try {
     const friends = await db
       .collection("friends")
-      .find({ $or: [{ requestedUser: user._id }, { acceptedUser: user._id }] })
+      .find({ $or: [{ requestedUser: req.user._id }, { acceptedUser: req.user._id }] })
       .toArray();
 
     res.status(200).send(friends);
@@ -134,4 +178,4 @@ async function unFriend(req, res, next) {
   }
 }
 
-module.exports = { authenticate, getMyDetails, makeFriends, getFriendRequests, acceptFriendRequest, getFriends, unFriend };
+module.exports = { authenticate, getMyDetails, getUserDetails, makeFriends, getFriendRequests, acceptFriendRequest, getFriends, unFriend };

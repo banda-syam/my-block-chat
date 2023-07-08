@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import "./AuthenticatePage.css";
 
 async function authenticate(message) {
@@ -59,10 +59,10 @@ const AuthenticatePage = () => {
           localStorage.setItem("token", response.headers.token);
           navigate("/");
         } else {
-          alert(response.data);
+          alert(response.data.message);
         }
       } catch (error) {
-        alert(error);
+        alert(error.response.data.message);
       }
     };
 

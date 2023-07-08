@@ -1,11 +1,18 @@
 import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./TopNav.css";
 
 const TopNav = () => {
+  const navigate = useNavigate();
+
   const logout = () => {
     localStorage.removeItem("token");
     window.location.reload();
+  };
+
+  const takeToRequests = () => {
+    navigate("/requests");
   };
 
   const getFriendRequests = async () => {
@@ -23,7 +30,7 @@ const TopNav = () => {
       const response = await axios(config);
       console.log(response);
     } catch (error) {
-      alert(error);
+      alert(error.response.data.message);
     }
   };
 
@@ -35,7 +42,7 @@ const TopNav = () => {
       <div>
         <ul id="lists">
           <li className="single-list">
-            <span>Friend Requests</span>
+            <span onClick={takeToRequests}>Friend Requests</span>
           </li>
           <li className="single-list">
             <span onClick={logout}> Logout </span>

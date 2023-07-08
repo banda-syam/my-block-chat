@@ -11,6 +11,10 @@ const authenticateSchema = joi.object({
   signature: joi.string().required(),
 });
 
+const userDetailsSchema = joi.object({
+  publicAddress: joi.string().required(),
+});
+
 const addFriendSchema = joi.object({
   publicAddress: joi.string().required(),
 });
@@ -23,4 +27,4 @@ const unFriendSchema = joi.object({
   unFriendId: joi.string().hex().length(24).custom(createObject).required(),
 });
 
-module.exports = { authenticateSchema, addFriendSchema, acceptFriendRequestSchema, unFriendSchema };
+module.exports = { authenticateSchema, userDetailsSchema, addFriendSchema, acceptFriendRequestSchema, unFriendSchema };
