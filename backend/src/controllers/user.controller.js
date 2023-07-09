@@ -153,9 +153,33 @@ async function acceptFriendRequest(req, res, next) {
 
 async function getFriends(req, res, next) {
   try {
+    // const friends = await db
+    //   .collection("friends")
+    //   .find({ $or: [{ requestedUser: req.user._id }, { acceptedUser: req.user._id }] })
+    //   .toArray();
+
     const friends = await db
       .collection("friends")
-      .find({ $or: [{ requestedUser: req.user._id }, { acceptedUser: req.user._id }] })
+      .aggregate([
+        {
+          $match: { $or: [{ requestedUser: req.user._id }, { acceptedUser: req.user._id }] },
+        },
+        {
+          $addFields: {
+            YourId: { $cond: { if: { $eq: ["$requestedUser", req.user._id] }, then: "$requestedUser", else: "$acceptedUser" } },
+            friendId: { $cond: { if: { $eq: ["$acceptedUser", req.user._id] }, then: "$acceptedUser", else: "$requestedUser" } },
+          },
+        },
+        {
+          $lookup: { from: "users", localField: "friendId", foreignField: "_id", as: "Friend" },
+        },
+        {
+          $unwind: "$Friend",
+        },
+        {
+          $addFields: { friendAddress: "$Friend.publicAddress" },
+        },
+      ])
       .toArray();
 
     res.status(200).send(friends);

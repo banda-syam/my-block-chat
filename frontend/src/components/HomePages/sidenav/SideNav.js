@@ -67,7 +67,6 @@ const SideNav = () => {
       };
 
       const response = await axios(config);
-      console.log("friends", response);
       if (response.status === 200) {
         setFriends(response.data);
       } else {
@@ -104,12 +103,15 @@ const SideNav = () => {
             </form>
           </div>
 
-          {friends?.length > 0
-            ? friends?.map((friend) => {
-                console.log(friend);
-                return <h1> hello</h1>;
-              })
-            : null}
+          <span id="friendstext"> FRIENDS </span>
+          <div className="friendsList">
+            {friends?.length > 0
+              ? friends?.map((friend) => {
+                  console.log("map", friend);
+                  return <span className="friendBox"> {friend.friendAddress}</span>;
+                })
+              : null}
+          </div>
         </div>
       </div>
     </>
