@@ -9,7 +9,7 @@ const MainFrame = () => {
     if (initialVal !== friendshipId) {
       setFriendshipId(localStorage.getItem("friendshipId"));
     }
-  }, 1000);
+  }, 500);
 
   return (
     <>
