@@ -153,11 +153,6 @@ async function acceptFriendRequest(req, res, next) {
 
 async function getFriends(req, res, next) {
   try {
-    // const friends = await db
-    //   .collection("friends")
-    //   .find({ $or: [{ requestedUser: req.user._id }, { acceptedUser: req.user._id }] })
-    //   .toArray();
-
     const friends = await db
       .collection("friends")
       .aggregate([
