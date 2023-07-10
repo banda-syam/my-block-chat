@@ -55,7 +55,11 @@ async function sendMessages(ws, parsedMessage) {
   }
 }
 
+var getMessagesMap = new Map();
+
 async function getMessages(ws, parsedMessage) {
+  if (getMessagesMap.get(parsedMessage.friendshipId)) {
+  }
   try {
     var token = parsedMessage.token;
     var friendshipId = parsedMessage.friendshipId;

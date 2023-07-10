@@ -24,6 +24,9 @@ var usersRouter = require("./src/routes/user.route");
 
 const { WebSocketServer } = require("ws");
 const wss = new WebSocketServer({ port: 4080 });
+const io = require("socket.io")(4081, {
+  cors: ["*"],
+});
 const { eventManagement } = require("./src/routes/websocket.route");
 
 var app = express();
@@ -87,6 +90,11 @@ wss.on("connection", (ws) => {
       ws.close();
     });
   }
+});
+
+io.on("connection", (socket) => {
+  console.log("user connected");
+  io.to(socket.id).emit("connection", `You are connected`);
 });
 
 module.exports = app;
