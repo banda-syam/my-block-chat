@@ -8,7 +8,7 @@ const TopNav = () => {
 
   const logout = () => {
     localStorage.removeItem("token");
-    window.location.reload();
+    navigate("/authenticate");
   };
 
   const takeToRequests = () => {
