@@ -89,7 +89,7 @@ const SideNav = () => {
 
   return (
     <>
-      <div>
+      <div className="main-div">
         <div className="sideNavContainer">
           <div className="header">
             <span>Your address : </span>
