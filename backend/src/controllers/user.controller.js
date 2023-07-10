@@ -167,7 +167,7 @@ async function getFriends(req, res, next) {
         {
           $addFields: {
             YourId: { $cond: { if: { $eq: ["$requestedUser", req.user._id] }, then: "$requestedUser", else: "$acceptedUser" } },
-            friendId: { $cond: { if: { $eq: ["$acceptedUser", req.user._id] }, then: "$acceptedUser", else: "$requestedUser" } },
+            friendId: { $cond: { if: { $eq: ["$acceptedUser", req.user._id] }, then: "$requestedUser", else: "$acceptedUser" } },
           },
         },
         {
