@@ -77,6 +77,10 @@ const SideNav = () => {
     }
   }
 
+  function setFriendshipId(data) {
+    localStorage.setItem("friendshipId", data);
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault();
     makeFriend();
@@ -108,7 +112,18 @@ const SideNav = () => {
             {friends?.length > 0
               ? friends?.map((friend) => {
                   console.log("map", friend);
-                  return <span className="friendBox"> {friend.friendAddress}</span>;
+                  return (
+                    <>
+                      <span
+                        className="friendBox"
+                        onClick={() => {
+                          localStorage.setItem("friendshipId", friend._id);
+                        }}
+                      >
+                        {friend.friendAddress}
+                      </span>
+                    </>
+                  );
                 })
               : null}
           </div>
