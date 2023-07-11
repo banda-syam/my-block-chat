@@ -23,11 +23,13 @@ var cors = require("cors");
 var usersRouter = require("./src/routes/user.route");
 
 const { WebSocketServer } = require("ws");
-const wss = new WebSocketServer({ port: 4080 });
+// const wss = new WebSocketServer({ port: 4080 });
 const io = require("socket.io")(4081, {
   cors: ["*"],
 });
+
 const { eventManagement } = require("./src/routes/websocket.route");
+const { socketEventManagment } = require("./src/routes/socket.io");
 
 var app = express();
 
@@ -64,37 +66,38 @@ app.use((error, req, res, next) => {
   res.status(statusCode).send({ message });
 });
 
-wss.on("connection", (ws) => {
-  try {
-    if (!serverInitialized) {
-      ws.send(JSON.stringify({ status: 503, message: "Server not initialized yet" }), () => {
-        ws.close();
-      });
-    }
+// wss.on("connection", (ws) => {
+//   try {
+//     if (!serverInitialized) {
+//       ws.send(JSON.stringify({ status: 503, message: "Server not initialized yet" }), () => {
+//         ws.close();
+//       });
+//     }
 
-    ws.send("Connected");
+//     ws.send("Connected");
 
-    ws.on("message", (message) => {
-      try {
-        eventManagement(wss, ws, message);
-      } catch (e) {
-        console.log(`Error in onMessage`, e);
-        ws.send(JSON.stringify({ status: 500, message: e.message }), () => {
-          ws.close();
-        });
-      }
-    });
-  } catch (e) {
-    console.log("connection error", e);
-    ws.send(JSON.stringify(e.message), () => {
-      ws.close();
-    });
-  }
-});
+//     ws.on("message", (message) => {
+//       try {
+//         eventManagement(wss, ws, message);
+//       } catch (e) {
+//         console.log(`Error in onMessage`, e);
+//         ws.send(JSON.stringify({ status: 500, message: e.message }), () => {
+//           ws.close();
+//         });
+//       }
+//     });
+//   } catch (e) {
+//     console.log("connection error", e);
+//     ws.send(JSON.stringify(e.message), () => {
+//       ws.close();
+//     });
+//   }
+// });
 
 io.on("connection", (socket) => {
   console.log("user connected");
   io.to(socket.id).emit("connection", `You are connected`);
+  socketEventManagment(io, socket);
 });
 
 module.exports = app;
