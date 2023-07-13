@@ -4,6 +4,7 @@ import TopNav from "./topnav/TopNav";
 import SideNav from "./sidenav/SideNav";
 import MainFrame from "./mainframe/MainFrame";
 import "./homepage.css";
+import socket from "../../socket";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -12,6 +13,14 @@ const HomePage = () => {
     if (!localStorage.getItem("token")) {
       navigate("/authenticate");
     }
+
+    socket.emit("connection");
+
+    socket.on("connection", (data) => {
+      console.log("connection io", data.message);
+    });
+
+    socket.emit("add-online", { token: localStorage.getItem("token") });
   }, []);
   return (
     <>

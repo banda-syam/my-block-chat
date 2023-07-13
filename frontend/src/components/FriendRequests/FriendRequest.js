@@ -37,7 +37,6 @@ const FriendRequests = () => {
     <>
       {friends?.length > 0 ? (
         friends?.map((friend) => {
-          console.log(friend);
           return <AcceptFriendRequest friend={friend} />;
         })
       ) : (

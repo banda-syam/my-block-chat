@@ -96,7 +96,7 @@ app.use((error, req, res, next) => {
 
 io.on("connection", (socket) => {
   console.log("user connected");
-  io.to(socket.id).emit("connection", `You are connected`);
+  io.to(socket.id).emit("connection", { status: 200, message: `You are connected` });
   socketEventManagment(io, socket);
 });
 
