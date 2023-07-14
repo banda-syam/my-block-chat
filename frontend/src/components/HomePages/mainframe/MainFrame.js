@@ -13,6 +13,11 @@ const MainFrame = () => {
     setFriendId(localStorage.getItem("friendId"));
   }, 200);
 
+  socket.on("read-message", (data) => {
+    messages.push({ from: data.from, to: data.to, message: data.message });
+    setMessages(messages);
+  });
+
   const handleSubmit = (e) => {
     socket.emit("send-message", { token: localStorage.getItem("token"), friendId: localStorage.getItem("friendId"), message: myMessage });
   };
