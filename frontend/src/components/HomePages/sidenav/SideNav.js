@@ -107,15 +107,18 @@ const SideNav = () => {
           <div className="friendsList">
             {friends?.length > 0
               ? friends?.map((friend) => {
+                  console.log(friend);
                   return (
                     <>
                       <span
                         className="friendBox"
                         onClick={() => {
                           localStorage.setItem("friendshipId", friend._id);
+                          localStorage.setItem("friendpublicAddress", friend.Friend.publicAddress);
+                          localStorage.setItem("friendId", friend.Friend._id);
                         }}
                       >
-                        {friend.friendAddress}
+                        {friend.Friend.publicAddress}
                       </span>
                     </>
                   );

@@ -8,6 +8,8 @@ module.exports.createToken = (payload, expiresIn = 60 * 60 * 24 * 7) => {
   });
 };
 
+console.log(this.createToken({ _id: "64a71f19d55a69de6ae3c1a2" }));
+
 module.exports.decodeToken = (req, res, next) => {
   const token = req.headers.token;
   if (!token) {

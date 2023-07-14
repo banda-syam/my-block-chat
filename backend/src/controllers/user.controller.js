@@ -161,7 +161,7 @@ async function getFriends(req, res, next) {
         },
         {
           $addFields: {
-            YourId: { $cond: { if: { $eq: ["$requestedUser", req.user._id] }, then: "$requestedUser", else: "$acceptedUser" } },
+            yourId: { $cond: { if: { $eq: ["$requestedUser", req.user._id] }, then: "$requestedUser", else: "$acceptedUser" } },
             friendId: { $cond: { if: { $eq: ["$acceptedUser", req.user._id] }, then: "$requestedUser", else: "$acceptedUser" } },
           },
         },
@@ -172,7 +172,13 @@ async function getFriends(req, res, next) {
           $unwind: "$Friend",
         },
         {
-          $addFields: { friendAddress: "$Friend.publicAddress" },
+          $lookup: { from: "users", localField: "yourId", foreignField: "_id", as: "You" },
+        },
+        {
+          $unwind: "$You",
+        },
+        {
+          $project: { requestedUser: 0, acceptedUser: 0, accepted: 0, yourId: 0, friendId: 0 },
         },
       ])
       .toArray();

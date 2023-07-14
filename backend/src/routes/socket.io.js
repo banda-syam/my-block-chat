@@ -51,7 +51,7 @@ async function socketEventManagment(io, socket) {
           }
 
           // validate user
-          var response = await validatedUser(parsedData.userToken);
+          var response = await validatedUser(parsedData.token);
           if (response.status != 200 || response.message) {
             return io.to(socket.id).emit("error", { status: response.status, message: `Error in send-message - ${response.message}` });
           }
@@ -86,6 +86,7 @@ async function socketEventManagment(io, socket) {
           } else {
             io.to(onlineUsersMap.get(isFriend._id.toString())).emit("read-message", parsedData.message);
           }
+          resolve();
         } catch (e) {
           console.log(e);
           reject(e);
@@ -96,21 +97,51 @@ async function socketEventManagment(io, socket) {
 
     socket.on("read-message", async (data) => {
       // parsing data
-      var parsedData = JSON.parse(data);
+      var parsedData = data;
 
       // check if token is given in data
       if (!parsedData.token) {
-        return io.to(socket.id).emit("error", { status: 400, message: `Error in send-message - Please mention token` });
+        return io.to(socket.id).emit("error", { status: 400, message: `Error in read-message - Please mention token` });
+      }
+
+      // check if friendId is given in data
+      if (!parsedData.friendId) {
+        return io.to(socket.id).emit("error", { status: 400, message: `Error in read-message - Please mention friendId` });
       }
 
       // validate user
-      var response = await validatedUser(parsedData.userToken);
+      var response = await validatedUser(parsedData.token);
       if (response.status != 200 || response.message) {
         return io.to(socket.id).emit("error", { status: response.status, message: `Error in send-message - ${response.message}` });
       }
 
       // get user
       var userId = response.user._id;
+
+      var messages = await db
+        .collection("messages")
+        .aggregate([
+          {
+            $match: {
+              $or: [
+                { from: userId, to: new ObjectId(parsedData.friendId) },
+                { from: new ObjectId(parsedData.friendId), to: userId },
+              ],
+            },
+          },
+          {
+            $addFields: {
+              from: { $cond: { if: { $eq: ["$from", userId] }, then: "you", else: "friend" } },
+              to: { $cond: { if: { $eq: ["$to", userId] }, then: "you", else: "friend" } },
+            },
+          },
+          {
+            $sort: { timestamp: -1 },
+          },
+        ])
+        .toArray();
+
+      io.to(socket.id).emit("read-message", messages);
     });
 
     socket.on("close", async (data) => {
@@ -124,7 +155,7 @@ async function socketEventManagment(io, socket) {
         }
 
         // validate user
-        var response = await validatedUser(parsedData.userToken);
+        var response = await validatedUser(parsedData.token);
         if (response.status != 200 || response.message) {
           return io.to(socket.id).emit("error", { status: response.status, message: `Error in send-message - ${response.message}` });
         }

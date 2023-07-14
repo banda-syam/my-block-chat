@@ -5,8 +5,6 @@ import HomePage from "./components/HomePages/HomePage";
 import FriendRequests from "./components/FriendRequests/FriendRequest";
 
 function App() {
-  // let ip = "https://api.user.server.cryptocricket.io";
-
   return (
     <>
       <Routes>
