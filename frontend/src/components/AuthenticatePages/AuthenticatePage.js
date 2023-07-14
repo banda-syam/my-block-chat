@@ -54,12 +54,11 @@ const AuthenticatePage = () => {
         };
 
         const response = await axios(config);
-        console.log(response);
         if (response.status === 201 || response.status === 200) {
           localStorage.setItem("token", response.headers.token);
           navigate("/");
         } else {
-          alert(response.data.message);
+          alert("alert in post login", response.data.message);
         }
       } catch (error) {
         alert(error.response.data.message);

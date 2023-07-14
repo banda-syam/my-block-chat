@@ -11,11 +11,12 @@ async function socketEventManagment(io, socket) {
         // parsing data
         var parsedData = data;
 
-        // get user token
-        var userToken = parsedData.token;
+        if (!parsedData.token) {
+          io.to(socket.id).emit("error", { status: 500, message: e.message });
+        }
 
         // validate user
-        var response = await validatedUser(userToken);
+        var response = await validatedUser(parsedData.token);
         if (response.status != 200 || response.message) {
           return ws.send(JSON.stringify(response));
         }
