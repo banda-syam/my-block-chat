@@ -4,16 +4,30 @@
   height: 100dvh;
   border-radius: 50px 50px 50px 50px;
   position: relative;
+  overflow-y: scroll;
+}
+
+.showChats {
+  height: 90dvh;
+  width: inherit;
+  overflow-y: scroll;
+  padding-left: 1rem;
+  /* margin-top: 1em; */
 }
 
 .mainChatContainerContents {
-  padding-left: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: inherit;
+  /* padding-left: 1rem; */
 }
 
 #friendAddressContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  /* position: fixed; */
+  /* top: 0%; */
+  /* left: 42%; */
 }
 
 .sendMessageFormContaimer {
@@ -22,12 +36,23 @@
 }
 
 .sendMessageForm {
-  position: absolute;
-  bottom: 0.3rem;
+  /* position: fixed; */
+  /* bottom: 0.3rem; */
 }
 
 #textMessageInput {
   width: 30rem;
   height: 4.5vh;
   border-radius: 2rem;
+}
+
+.singleChat {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1rem;
+  border: 0.5px solid grey;
+  width: 50%;
+  height: 3rem;
+  border-radius: 1rem 1rem 1rem 1rem;
+  padding-left: 0.5rem;
 }

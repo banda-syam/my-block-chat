@@ -33,7 +33,7 @@ async function socketEventManagment(io, socket) {
       return new Promise(async (resolve, reject) => {
         try {
           // parsing data
-          var parsedData = JSON.parse(data);
+          var parsedData = data;
 
           // check if token is given in data
           if (!parsedData.token) {
@@ -42,7 +42,7 @@ async function socketEventManagment(io, socket) {
 
           // check if friendId is mentioned
           if (!parsedData.friendId) {
-            return io.to(socket.id).emit("error", { status: 400, message: `Error in send-message - Please mention friendshipId` });
+            return io.to(socket.id).emit("error", { status: 400, message: `Error in send-message - Please mention friendId` });
           }
 
           // check if message is present
@@ -84,7 +84,7 @@ async function socketEventManagment(io, socket) {
             // io.to(socket.id).emit("error", { status: 402, message: "User is not online" });
             console.log(`${parsedData.friendId} user is not online`);
           } else {
-            io.to(onlineUsersMap.get(isFriend._id.toString())).emit("read-message", parsedData.message);
+            io.to(onlineUsersMap.get(isFriend._id.toString())).emit("read-message", { from: "friend", to: "you", message: parsedData.message });
           }
           resolve();
         } catch (e) {
@@ -95,7 +95,7 @@ async function socketEventManagment(io, socket) {
       });
     });
 
-    socket.on("read-message", async (data) => {
+    socket.on("read-message-bulk", async (data) => {
       // parsing data
       var parsedData = data;
 
@@ -135,13 +135,19 @@ async function socketEventManagment(io, socket) {
               to: { $cond: { if: { $eq: ["$to", userId] }, then: "you", else: "friend" } },
             },
           },
-          {
-            $sort: { timestamp: -1 },
-          },
+          // {
+          //   $sort: { timestamp: -1 },
+          // },
+          // {
+          //   $limit: 3,
+          // },
+          // {
+          //   $sort: { timestamp: 1 },
+          // },
         ])
         .toArray();
 
-      io.to(socket.id).emit("read-message", messages);
+      io.to(socket.id).emit("read-message-bulk", messages);
     });
 
     socket.on("close", async (data) => {

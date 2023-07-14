@@ -3,21 +3,37 @@ import "./MainFrame.css";
 import socket from "../../../socket";
 
 const MainFrame = () => {
+  const [myMessage, setMyMessage] = useState("");
   const [friendshipId, setFriendshipId] = useState("");
   const [friendId, setFriendId] = useState("");
+  const [messages, setMessages] = useState([]);
 
   setInterval(() => {
     setFriendshipId(localStorage.getItem("friendshipId"));
     setFriendId(localStorage.getItem("friendId"));
   }, 200);
 
+  const handleSubmit = (e) => {
+    socket.emit("send-message", { token: localStorage.getItem("token"), friendId: localStorage.getItem("friendId"), message: myMessage });
+  };
+
   useEffect(() => {
-    console.log("triggered");
-    socket.emit("read-message", { token: localStorage.getItem("token"), friendId: friendId });
-    socket.on("read-message", (data) => {
-      console.log("read message", data);
+    socket.on("error", (data) => {
+      console.log("error data", data);
+      alert(data.message);
     });
-  }, [friendshipId, friendId]);
+
+    // get bulk messages
+    socket.emit("read-message-bulk", { token: localStorage.getItem("token"), friendId: localStorage.getItem("friendId") });
+    socket.on("read-message-bulk", (data) => {
+      setMessages(data);
+    });
+
+    socket.on("read-message", (data) => {
+      messages.push({ from: data.from, to: data.to, message: data.message });
+      setMessages(messages);
+    });
+  }, [friendshipId, friendId, myMessage]);
   return (
     <>
       <div className="mainChatContainer">
@@ -29,11 +45,24 @@ const MainFrame = () => {
               </span>
             </div>
 
-            <div className="showChats"></div>
+            <div className="showChats">
+              {messages.map((message) => {
+                return (
+                  <div className="singleChat">
+                    <>
+                      <span id="youMessage">
+                        <strong>{message.from}</strong>
+                      </span>
+                      <span> {message.message} </span>
+                    </>
+                  </div>
+                );
+              })}
+            </div>
 
             <div className="sendMessageFormContaimer">
-              <form className="sendMessageForm">
-                <input type="text" id="textMessageInput"></input>
+              <form className="sendMessageForm" onSubmit={handleSubmit}>
+                <input type="text" id="textMessageInput" onChange={(e) => setMyMessage(e.target.value)}></input>
                 <input type="submit" value="send" id="messageSendButton"></input>
               </form>
             </div>

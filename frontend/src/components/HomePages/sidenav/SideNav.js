@@ -107,7 +107,6 @@ const SideNav = () => {
           <div className="friendsList">
             {friends?.length > 0
               ? friends?.map((friend) => {
-                  console.log(friend);
                   return (
                     <>
                       <span

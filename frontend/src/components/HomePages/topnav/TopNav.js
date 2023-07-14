@@ -15,27 +15,27 @@ const TopNav = () => {
     navigate("/requests");
   };
 
-  const getFriendRequests = async () => {
-    try {
-      let config = {
-        method: "GET",
-        url: `http://localhost:4000/api/user/friendrequest`,
-        headers: {
-          mode: "no-cors",
-          accept: "application/json",
-          token: localStorage.getItem("token"),
-        },
-      };
+  // const getFriendRequests = async () => {
+  //   try {
+  //     let config = {
+  //       method: "GET",
+  //       url: `http://localhost:4000/api/user/friendrequest`,
+  //       headers: {
+  //         mode: "no-cors",
+  //         accept: "application/json",
+  //         token: localStorage.getItem("token"),
+  //       },
+  //     };
 
-      const response = await axios(config);
-      console.log(response);
-    } catch (error) {
-      alert(error.response.data.message);
-    }
-  };
+  //     const response = await axios(config);
+  //     console.log(response);
+  //   } catch (error) {
+  //     alert(error.response.data.message);
+  //   }
+  // };
 
   useEffect(() => {
-    getFriendRequests();
+    // getFriendRequests();
   }, []);
   return (
     <>
