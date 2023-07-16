@@ -8,14 +8,25 @@ const MainFrame = () => {
   const [friendId, setFriendId] = useState("");
   const [messages, setMessages] = useState([]);
 
-  setInterval(() => {
-    setFriendshipId(localStorage.getItem("friendshipId"));
-    setFriendId(localStorage.getItem("friendId"));
-  }, 200);
+  // setInterval(() => {
+  //   if (localStorage.getItem("friendshipId") !== friendshipId) {
+  //     setFriendshipId(localStorage.getItem("friendshipId"));
+  //   }
+  //   if (localStorage.getItem("friendId") !== friendId) {
+  //     setFriendId(localStorage.getItem("friendId"));
+  //   }
+  // }, 200);
 
   socket.on("read-message", (data) => {
+    console.log("triggered - data", data);
     messages.push({ from: data.from, to: data.to, message: data.message });
     setMessages(messages);
+  });
+
+  // get bulk messages
+  socket.emit("read-message-bulk", { token: localStorage.getItem("token"), friendId: localStorage.getItem("friendId") });
+  socket.on("read-message-bulk", (data) => {
+    setMessages(data);
   });
 
   const handleSubmit = (e) => {
@@ -28,16 +39,16 @@ const MainFrame = () => {
       alert(data.message);
     });
 
-    // get bulk messages
-    socket.emit("read-message-bulk", { token: localStorage.getItem("token"), friendId: localStorage.getItem("friendId") });
-    socket.on("read-message-bulk", (data) => {
-      setMessages(data);
-    });
+    // // get bulk messages
+    // socket.emit("read-message-bulk", { token: localStorage.getItem("token"), friendId: localStorage.getItem("friendId") });
+    // socket.on("read-message-bulk", (data) => {
+    //   setMessages(data);
+    // });
 
-    socket.on("read-message", (data) => {
-      messages.push({ from: data.from, to: data.to, message: data.message });
-      setMessages(messages);
-    });
+    // socket.on("read-message", (data) => {
+    //   messages.push({ from: data.from, to: data.to, message: data.message });
+    //   setMessages(messages);
+    // });
   }, [friendshipId, friendId, myMessage]);
   return (
     <>
